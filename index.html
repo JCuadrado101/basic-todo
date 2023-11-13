@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Auth Example</title>
+</head>
+<body>
+  <h1>Firebase Authentication Example</h1>
+
+  <div id="auth-container">
+    <h2>Authentication</h2>
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Enter your email"><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" placeholder="Enter your password"><br>
+    <button id="signUpBtn">Sign Up</button>
+    <button id="signInBtn">Sign In</button>
+  </div>
+
+  <div id="user-container" style="display: none;">
+    <h2>User Info</h2>
+    <p id="user-email"></p>
+    <button id="signOutBtn">Sign Out</button>
+
+    <form style="display: flex; flex-direction: column; margin: 2rem" id="myForm">
+        <label for="title">Title</label>
+        <input type="text" id="title">
+        <label for="description">Description</label>
+        <input type="text" id="description">
+        <label for="endDate">Date</label>
+        <input type="date" id="endDate">
+        <input type="submit" value="Submit" style="margin: 2rem 0;" >
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD3E5hTwdFQpNnZmucODmCkkbx_ZNn93Fw",
+        authDomain: "todo-app-ab488.firebaseapp.com",
+        projectId: "todo-app-ab488",
+        storageBucket: "todo-app-ab488.appspot.com",
+        messagingSenderId: "550635337958",
+        appId: "1:550635337958:web:bde24082ee9056da9a2327",
+        measurementId: "G-MSXHNX3YXR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+
+
+    document.getElementById("signUpBtn").addEventListener("click", () => {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+  
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                console.log('User signed up:', user);
+                showUserInfo(user);
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error('Sign-up error:', errorCode, errorMessage);
+            });
+    })
+
+
+    document.getElementById("signOutBtn").addEventListener("click", () => {
+        auth.signOut()
+        .then(() => {
+          console.log("User signed out");
+        })
+        .catch((error) => {
+          console.error("Error signing out:", error);
+        });
+    })
+    
+
+
+    document.getElementById("signInBtn").addEventListener("click", () => {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+  
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                showUserInfo(user);
+                showUserInfo(user.uid);
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error('Sign-in error:', errorCode, errorMessage);
+            });
+    })
+
+    document.getElementById("myForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const date = document.getElementById('endDate').value;
+        // Perform actions with the form data, for example, send it to a server
+        console.log('Title:', title);
+        console.log('Description:', description);
+        console.log('Date:', date);
+
+        // Reset the form or perform any other actions
+        myForm.reset();
+
+    })
+
+    function showUserInfo(user) {
+      document.getElementById('user-email').innerText = `User Email: ${user.email}`;
+      document.getElementById('auth-container').style.display = 'none';
+      document.getElementById('user-container').style.display = 'block';
+    }
+
+    function hideUserInfo() {
+      document.getElementById('user-container').style.display = 'none';
+      document.getElementById('auth-container').style.display = 'block';
+    }
+
+    // Check if the user is already signed in on page load
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+          // User is signed in
+          console.log('User is signed in:', user);
+          console.log(user.uid);
+          showUserInfo(user);
+      } else {
+          // User is signed out
+          console.log('User is signed out');
+          hideUserInfo();
+      }
+    });
+  </script>
+</body>
+</html>

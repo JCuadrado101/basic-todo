@@ -7,23 +7,22 @@ const client = createClient({
 
     client.execute(`
         CREATE TABLE Users (
-             user_id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
              username VARCHAR(255) NOT NULL,
              password VARCHAR(255) NOT NULL
         );
     `)
 
-    client.execute(`
-        CREATE TABLE Tasks (
-            task_id INT PRIMARY KEY,
-            user_id INT,
-            title VARCHAR(255) NOT NULL,
-            description TEXT,
-            due_date DATE,
-            completed BOOLEAN DEFAULT false,
-            FOREIGN KEY (user_id) REFERENCES Users(user_id)
-        );
-    `)
+    // client.execute(`
+    //     CREATE TABLE Tasks (
+    //         task_id INT NOT NULL PRIMARY KEY,
+    //         user_id INT,
+    //         title VARCHAR(255) NOT NULL,
+    //         description TEXT,
+    //         due_date DATE,
+    //         completed BOOLEAN DEFAULT false,
+    //         FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    //     );
+    // `)
 
 
 await client.sync();
